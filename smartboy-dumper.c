@@ -287,8 +287,6 @@ int main (int argc, char **argv)
 	GMainLoop *loop;
 	SmartboyDumper *dumper;
 
-	//FIXME add "-i" which just prints the name and the ROM size
-
 	if (argc != 2) {
 		g_printerr ("Usage: %s DEVICE...", argv[0]);
 		//FIXME save to ROMNAME.gbc for Color games
