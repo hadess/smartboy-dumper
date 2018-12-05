@@ -311,7 +311,7 @@ int main (int argc, char **argv)
 	dumper = smartboy_dumper_new ();
 	dumper->chan = chan;
 	dumper->loop = loop;
-	//FIXME more conditions?
+
 	g_io_add_watch (chan, G_IO_IN | G_IO_PRI | G_IO_ERR, fd_watch, dumper);
 
 	g_main_loop_run (dumper->loop);
