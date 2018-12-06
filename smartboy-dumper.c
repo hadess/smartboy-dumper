@@ -200,6 +200,8 @@ fd_watch (GIOChannel *source,
 		filename = g_strdup_printf ("%s.gb", dumper->rom_name);
 		g_print ("*** Saving '%s'\n", filename);
 
+		g_file_set_contents (filename, (char *) buf->data, rom_size, NULL);
+
 		g_print ("*** Wrote '%s'\n", filename);
 		g_byte_array_free (buf, TRUE);
 		g_free (filename);
