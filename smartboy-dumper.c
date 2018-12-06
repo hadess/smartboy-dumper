@@ -78,6 +78,23 @@ smartboy_dumper_free (SmartboyDumper *dumper)
 	g_free (dumper);
 }
 
+#define GB_MAGIC_STRING "\xce\xed\x66\x66\xcc\x0d\x00\x0b\x03\x73\x00\x83\x00\x0c\x00\x0d\x00\x08\x11\x1f\x88\x89\x00\x0e"
+#define GB_MAGIC_OFFSET 260
+
+static char *
+create_filename (const char *rom_name,
+		 GByteArray *buf)
+{
+	/* Figure out the suffix */
+	if (buf->len < GB_MAGIC_OFFSET + strlen (GB_MAGIC_STRING))
+		return NULL;
+
+	if (memcmp (buf->data + GB_MAGIC_OFFSET, GB_MAGIC_STRING, strlen (GB_MAGIC_STRING)) == 0)
+		return g_strdup_printf ("%s.gb", rom_name);
+
+	return g_strdup_printf ("%s.gbc", rom_name);
+}
+
 static InState
 suffix_get_tag (const char *str)
 {
@@ -197,7 +214,7 @@ fd_watch (GIOChannel *source,
 
 		g_print ("\b\b\b100%%\n");
 
-		filename = g_strdup_printf ("%s.gb", dumper->rom_name);
+		filename = create_filename (dumper->rom_name, buf);
 		g_print ("*** Saving '%s'\n", filename);
 
 		g_file_set_contents (filename, (char *) buf->data, rom_size, NULL);
