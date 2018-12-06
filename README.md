@@ -62,8 +62,8 @@ is finally shown.
 
 `nr` will appear continuously if no game pak is inserted.
 
-`FIXME`: `ms` never appeared in a USB dump, `vs` is sometimes sent by the dumper, maybe
-"Verify Start" as an answer to `sd`?
+`FIXME`: `ms` looks like it means "Mass Storage" and `vs` is "Serial Com" but they never
+appeared in a USB dump on my retail unit. Maybe a feature of the developer version?
 
 ## Smartboy Dumper
 
