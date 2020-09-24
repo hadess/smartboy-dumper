@@ -183,7 +183,8 @@ fd_watch (GIOChannel *source,
 	char buf[1];
 
 	if (condition & G_IO_ERR) {
-		g_warning ("Error");
+		g_warning ("Error reading from device");
+		g_main_loop_quit (dumper->loop);
 		return FALSE;
 	}
 
