@@ -232,10 +232,10 @@ fd_watch (GIOChannel *source,
 	if (dumper->rom_name != NULL &&
 	    dumper->nr_banks > 0 &&
 	    dumper->rom_req == FALSE) {
-		const char *buf = "sd";
+		const char *sd = "sd";
 		dumper->rom_req = TRUE;
 		g_assert (g_io_channel_write_chars (dumper->chan,
-					  buf, sizeof(buf), NULL, NULL) == G_IO_STATUS_NORMAL);
+					  sd, sizeof(sd), NULL, NULL) == G_IO_STATUS_NORMAL);
 
 		g_print ("*** Requesting ROM\n");
 		return TRUE;
