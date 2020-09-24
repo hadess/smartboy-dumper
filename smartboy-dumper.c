@@ -299,29 +299,46 @@ fd_watch (GIOChannel *source,
 	return TRUE;
 }
 
+
+
 int main (int argc, char **argv)
 {
 	int fd;
 	GIOChannel *chan;
 	GMainLoop *loop;
 	SmartboyDumper *dumper;
+	g_autoptr(GOptionContext) option_context = NULL;
+	g_autoptr(GError) error = NULL;
+	g_autofree char *device = g_strdup ("/dev/ttyACM0");
+	gboolean verbose = FALSE;
+	gboolean ret;
+	const GOptionEntry options[] = {
+		{ "device", 'd', 0, G_OPTION_ARG_STRING, &device, "Serial device to use (/dev/ttyACM0 by default)", NULL },
+		{ "verbose", 'v', 0, G_OPTION_ARG_NONE, &verbose, "Show extra debugging information", NULL },
+		{ NULL}
+	};
 
-	if (argc != 2) {
-		g_printerr ("Usage: %s DEVICE...", argv[0]);
-		//FIXME save to ROMNAME.gbc for Color games
-		g_printerr ("ROM will be saved to ROMNAME.gb");
-		return 1;
+	option_context = g_option_context_new ("");
+	g_option_context_add_main_entries (option_context, options, NULL);
+
+	ret = g_option_context_parse (option_context, &argc, &argv, &error);
+	if (!ret) {
+		g_print ("Failed to parse arguments: %s\n", error->message);
+		return EXIT_FAILURE;
 	}
+
+	if (verbose)
+		g_setenv ("G_MESSAGES_DEBUG", "all", TRUE);
 
 	loop = g_main_loop_new (NULL, TRUE);
 
-	fd = open (argv[1], O_RDWR | O_NONBLOCK | O_NDELAY | O_NOCTTY);
+	fd = open (device, O_RDWR | O_NONBLOCK | O_NDELAY | O_NOCTTY);
 	if (fd < 0) {
-		g_warning ("Failed to open device %s", argv[1]);
+		g_warning ("Failed to open device %s", device);
 		return 1;
 	}
 
-	g_print ("*** Opened device %s\n", argv[1]);
+	g_print ("*** Opened device %s\n", device);
 
 	chan = g_io_channel_unix_new (fd);
 	g_io_channel_set_encoding (chan, NULL, NULL);
