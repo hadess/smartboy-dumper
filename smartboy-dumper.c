@@ -112,6 +112,22 @@ suffix_get_tag (const char *str)
 }
 
 static InState
+prefix_get_tag (const char *str)
+{
+	guint i;
+
+	if (str == NULL)
+		return IN_NONE;
+
+	for (i = 1; i < G_N_ELEMENTS(tags); i++) {
+		if (g_str_has_prefix (str, tags[i]))
+			return i;
+	}
+
+	return IN_NONE;
+}
+
+static InState
 read_until_new_state (SmartboyDumper *dumper,
 		      GString        *str)
 {
@@ -280,6 +296,24 @@ fd_watch (GIOChannel *source,
 		}
 	} else {
 		if (dumper->tag_pos >= 0) {
+			char tag[10];
+			InState new_possible_state;
+			guint i;
+
+			/* Reconstruct the start of the tag */
+			for (i = 0; i <= dumper->tag_pos; i++)
+				tag[i] = tags[dumper->state][dumper->tag_pos];
+			tag[dumper->tag_pos + 1] = buf[0];
+			tag[dumper->tag_pos + 2] = '\0';
+
+			new_possible_state = prefix_get_tag (tag);
+			if (new_possible_state != IN_NONE &&
+			    new_possible_state != dumper->state) {
+				g_debug ("New possible state is %s, was %s",
+					 tags[new_possible_state], tags[dumper->state]);
+				dumper->state = new_possible_state;
+			}
+
 			if (tags[dumper->state][dumper->tag_pos + 1] == buf[0]) {
 				/* Next letter in tag matches */
 
