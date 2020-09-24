@@ -51,6 +51,7 @@ typedef struct {
 	InState state;
 	int tag_pos; /* tag cursor position, or -1 if complete */
 	gboolean rom_req;
+	gboolean cart_req;
 
 	char *rom_name;
 	int nr_banks; /* -1 is unknown */
@@ -274,6 +275,10 @@ fd_watch (GIOChannel *source,
 			g_clear_pointer (&dumper->rom_name, g_free);
 			dumper->nr_banks = -1;
 			dumper->rom_req = FALSE;
+			if (!dumper->cart_req) {
+				g_print ("*** Insert cartridge\n");
+				dumper->cart_req = TRUE;
+			}
 			break;
 		case IN_STARTROM:
 			/* Shouldn't happen, it's handled earlier */
@@ -329,6 +334,12 @@ fd_watch (GIOChannel *source,
 					/* Tag is complete */
 					g_debug ("State %s complete", tags[dumper->state]);
 					dumper->tag_pos = -1;
+					if (dumper->state == IN_NR && !dumper->cart_req) {
+						g_print ("*** Insert cartridge\n");
+						dumper->cart_req = TRUE;
+					} else {
+						dumper->cart_req = FALSE;
+					}
 				} else {
 					dumper->tag_pos++;
 				}
