@@ -269,6 +269,12 @@ fd_watch (GIOChannel *source,
 			g_debug ("Reading ROM banks until new state");
 			dumper->state = read_size_until_new_state (dumper);
 			break;
+		case IN_NR:
+			g_debug ("Resetting and waiting for ROM");
+			g_clear_pointer (&dumper->rom_name, g_free);
+			dumper->nr_banks = -1;
+			dumper->rom_req = FALSE;
+			break;
 		case IN_STARTROM:
 			/* Shouldn't happen, it's handled earlier */
 			/* fallthrough */
@@ -276,7 +282,8 @@ fd_watch (GIOChannel *source,
 			g_assert_not_reached ();
 		}
 
-		return TRUE;
+		if (dumper->state != IN_NR)
+			return TRUE;
 	}
 
 	g_io_channel_read_chars (source, buf, 1, &bytes_read, NULL);
