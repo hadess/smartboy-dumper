@@ -181,6 +181,7 @@ fd_watch (GIOChannel *source,
 {
 	SmartboyDumper *dumper = data;
 	char buf[1];
+	gsize bytes_read = 0;
 
 	if (condition & G_IO_ERR) {
 		g_warning ("Error reading from device");
@@ -262,7 +263,9 @@ fd_watch (GIOChannel *source,
 		return TRUE;
 	}
 
-	g_io_channel_read_chars (source, buf, 1, NULL, NULL);
+	g_io_channel_read_chars (source, buf, 1, &bytes_read, NULL);
+	if (bytes_read < 1)
+		return TRUE;
 
 	if (dumper->state == IN_NONE) {
 		guint i;
