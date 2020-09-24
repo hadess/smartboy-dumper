@@ -1,2 +1,2 @@
 smartboy-dumper: smartboy-dumper.c
-	gcc -Wall -o $@  $< `pkg-config --libs --cflags glib-2.0`
+	gcc -Wall -g -o $@  $< `pkg-config --libs --cflags glib-2.0`
