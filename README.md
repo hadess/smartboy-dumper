@@ -75,7 +75,7 @@ Note that the disassembled source and reverse-engineering were done on the assum
 ```
 it is hard to imagine how something that is available for free can be stolen
 ```
-[as Hyperkin say themselves on their website](http://retron5.in/node/3).
+[as Hyperkin say themselves on their website](https://web.archive.org/web/20240226205048/http://retron5.in/node/3).
 
 ## License
 
